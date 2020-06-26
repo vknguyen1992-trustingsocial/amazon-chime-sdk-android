@@ -69,6 +69,17 @@
             android:paddingRight="8dp"
             android:src="@drawable/button_end" />
 
+        <ImageButton
+            android:id="@+id/buttonCapture"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:contentDescription="@string/meeting_leave"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:src="@drawable/button_end" />
+
     </LinearLayout>
 
     <LinearLayout

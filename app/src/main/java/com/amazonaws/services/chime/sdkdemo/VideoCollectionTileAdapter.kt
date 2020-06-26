@@ -58,11 +58,16 @@ class ViewHolder(inflatedView: View, audioVideoFacade: AudioVideoFacade) :
     }
 
     fun bindVideoTile(videoCollectionTile: VideoCollectionTile) {
+
+
         audioVideo.bindVideoView(view.video_surface, videoCollectionTile.videoTileState.tileId)
         view.video_surface.contentDescription = "${videoCollectionTile.attendeeName} VideoTile"
         if (videoCollectionTile.videoTileState.isLocalTile) {
             view.on_tile_button.visibility = View.VISIBLE
             view.on_tile_button.setOnClickListener { audioVideo.switchCamera() }
+
+            TVUtils.localTileView = view.video_surface;
+
         } else {
             view.attendee_name.text = videoCollectionTile.attendeeName
             view.attendee_name.visibility = View.VISIBLE

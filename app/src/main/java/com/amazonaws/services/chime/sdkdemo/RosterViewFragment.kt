@@ -8,7 +8,9 @@ package com.amazonaws.services.chime.sdkdemo
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -83,6 +85,7 @@ class RosterViewFragment : Fragment(),
 
     private lateinit var buttonMute: ImageButton
     private lateinit var buttonVideo: ImageButton
+    private lateinit var buttonCapture: ImageButton
     private lateinit var recyclerViewRoster: RecyclerView
     private lateinit var recyclerViewVideoCollection: RecyclerView
     private lateinit var recyclerViewScreenShareCollection: RecyclerView
@@ -137,8 +140,12 @@ class RosterViewFragment : Fragment(),
         buttonVideo.setImageResource(if (rosterViewModel.isCameraOn) R.drawable.button_video_on else R.drawable.button_video)
         buttonVideo.setOnClickListener { toggleVideo() }
 
+        buttonCapture = view.findViewById(R.id.buttonCapture)
+        buttonCapture.setOnClickListener { captureImage() }
+
         view.findViewById<ImageButton>(R.id.buttonLeave)
             ?.setOnClickListener { listener.onLeaveMeeting() }
+
 
         setupSubTabs(view)
         selectTab(rosterViewModel.tabIndex)
@@ -150,17 +157,20 @@ class RosterViewFragment : Fragment(),
     }
 
     private fun setupSubTabs(view: View) {
+        // recyclerViewRoster
         recyclerViewRoster = view.findViewById(R.id.recyclerViewRoster)
         recyclerViewRoster.layoutManager = LinearLayoutManager(activity)
         rosterAdapter = RosterAdapter(rosterViewModel.currentRoster.values)
         recyclerViewRoster.adapter = rosterAdapter
 
+        // recyclerViewVideoCollection
         recyclerViewVideoCollection =
             view.findViewById(R.id.recyclerViewVideoCollection)
         recyclerViewVideoCollection.layoutManager = createLinearLayoutManagerForOrientation()
         videoTileAdapter = VideoCollectionTileAdapter(rosterViewModel.currentVideoTiles.values, audioVideo, context)
         recyclerViewVideoCollection.adapter = videoTileAdapter
 
+        // recyclerViewScreenShareCollection
         recyclerViewScreenShareCollection =
             view.findViewById(R.id.recyclerViewScreenShareCollection)
         recyclerViewScreenShareCollection.layoutManager = LinearLayoutManager(activity)
@@ -404,6 +414,11 @@ class RosterViewFragment : Fragment(),
         audioVideo.startLocalVideo()
         buttonVideo.setImageResource(R.drawable.button_video_on)
         selectTab(SubTab.Video.position)
+    }
+
+    private fun captureImage() {
+        val bitmapImg: Bitmap? = TVUtils.localTileView.capture()
+        Log.e("VKN", "" + bitmapImg?.width + " x " + bitmapImg?.height)
     }
 
     override fun onRequestPermissionsResult(
