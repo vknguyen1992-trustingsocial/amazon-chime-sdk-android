@@ -44,6 +44,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url "${project.rootDir}/repo" }
         flatDir {
             dirs '../app/libs'
             dirs '../amazon-chime-sdk/libs'

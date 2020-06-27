@@ -25,6 +25,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".InMeetingActivity" />
+        <meta-data
+            android:name="com.trustvision.accessKeyId"
+            android:value="5767c20d-87aa-4cad-8dbb-f5429f76c34b" />
+        <meta-data
+            android:name="com.trustvision.accessKeySecret"
+            android:value="c1446919-e60a-4575-a05d-304318212a1b" />
     </application>
 
 </manifest>

@@ -9,27 +9,23 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.amazonaws.services.chime.sdk.meetings.utils.Versioning
 import com.amazonaws.services.chime.sdk.meetings.utils.logger.ConsoleLogger
 import com.amazonaws.services.chime.sdk.meetings.utils.logger.LogLevel
+import com.trustingsocial.tvsdk.TVDetectionError
+import com.trustingsocial.tvsdk.internal.TrustVisionSDK
+import com.trustingsocial.tvsdk.internal.TrustVisionSDK.TVInitializeListener
+import kotlinx.coroutines.*
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MeetingHomeActivity : AppCompatActivity() {
     private val logger = ConsoleLogger(LogLevel.INFO)
@@ -88,7 +84,15 @@ class MeetingHomeActivity : AppCompatActivity() {
             ).show()
         } else {
             if (hasPermissionsAlready()) {
-                authenticate(getString(R.string.test_url), meetingID, yourName)
+                TrustVisionSDK.init(this, object : TVInitializeListener {
+                    override fun onInitSuccess() {
+                        authenticate(getString(R.string.test_url), meetingID, yourName)
+                    }
+
+                    override fun onInitError(error: TVDetectionError) {
+                        Log.e("VKNLog", error.errorDescription)
+                    }
+                })
             } else {
                 ActivityCompat.requestPermissions(this, WEBRTC_PERM, WEBRTC_PERMISSION_REQUEST_CODE)
             }

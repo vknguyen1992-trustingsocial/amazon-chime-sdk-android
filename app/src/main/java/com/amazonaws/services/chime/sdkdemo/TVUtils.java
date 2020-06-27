@@ -6,6 +6,8 @@ import android.view.View;
 
 import com.amazonaws.services.chime.sdk.meetings.audiovideo.video.DefaultVideoRenderView;
 
+import java.io.ByteArrayOutputStream;
+
 public class TVUtils {
     static DefaultVideoRenderView localTileView;
 
@@ -14,5 +16,11 @@ public class TVUtils {
         Canvas c = new Canvas(b);
         v.draw(c);
         return b;
+    }
+
+    public static byte[] toByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+        return stream.toByteArray();
     }
 }

@@ -48,6 +48,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import com.trustingsocial.tvsdk.internal.TrustVisionSDK
+import com.trustingsocial.apisdk.TVApi
+import com.trustingsocial.apisdk.data.*
 
 class RosterViewFragment : Fragment(),
     RealtimeObserver, AudioVideoObserver, VideoTileObserver,
@@ -418,7 +421,33 @@ class RosterViewFragment : Fragment(),
 
     private fun captureImage() {
         val bitmapImg: Bitmap? = TVUtils.localTileView.capture()
-        Log.e("VKN", "" + bitmapImg?.width + " x " + bitmapImg?.height)
+        Log.e("VKNLog", "" + bitmapImg?.width + " x " + bitmapImg?.height)
+        TVApi.getInstance().uploadImage(TVUtils.toByteArray(bitmapImg), "id_card.vn.national_id.front", null, object: TVCallback<TVUploadImageResponse> {
+            override fun onSuccess(data: TVUploadImageResponse?) {
+                if (data != null) {
+                    Log.e("VKNLog", "imageId " + data.imageId)
+
+                    val request = TVSyncCardInfoRequest()
+                    request.setCardType("vn.national_id");
+                    request.setImage1(TVSyncImage.createById(data.imageId))
+                    TVApi.getInstance().syncReadIdCardInfo(request, object: TVCallback<TVCardInfoResponse> {
+                        override fun onSuccess(p0: TVCardInfoResponse?) {
+                            TODO("Not yet implemented")
+                        }
+
+                        override fun onError(p0: MutableList<TVApiError>?) {
+                            Log.e("VKNLog", "syncReadIdCardInfo - Error " + (p0?.get(0)?.message ?: "Unknown error"))
+                        }
+
+                    })
+                }
+            }
+
+            override fun onError(p0: MutableList<TVApiError>?) {
+                Log.e("VKNLog", "uploadImage - Error " + (p0?.get(0)?.message ?: "Unknown error"))
+            }
+
+        })
     }
 
     override fun onRequestPermissionsResult(
